@@ -13,17 +13,17 @@
     <!-- Load d3.js -->
     <script src="https://d3js.org/d3.v5.js"></script>
 
-    <h1 style="margin-left: 320px; margin-top: 60px;">Average Monthly Temperature</h1>
+    <!-- <h1 style="margin-left: 320px; margin-top: 60px;">Average Monthly Temperature</h1>
 
     <div style="font-size:20px; font-weight: bold; position:relative">
       Year
-    </div>
+    </div> -->
 
     <!-- div where the graph will take place -->
     <div id="graph" style="margin-left: 80px; ">
       <!-- important that div.tooltip nests inside #graph -->
       <!-- this lets ups position the tooltip based on mouse position -->
-      <div class="tooltip"></div>
+      <!-- <div class="tooltip"></div> -->
       <svg></svg>
 
     </div>
@@ -38,23 +38,25 @@
   </body>
 </html>
 
-<script>
+
+
+<!--<script>
 
 // Margin Convention
-let margins = { top: 20, right: 25, bottom: 30, left: 40 };
-let outerWidth = 900;
-let outerHeight = 900;
-let innerWidth = 900 - margins.left - margins.right;
-let innerHeight = 900 - margins.top - margins.bottom;
+// let margins = { top: 20, right: 25, bottom: 30, left: 40 };
+// let outerWidth = 900;
+// let outerHeight = 900;
+// let innerWidth = 900 - margins.left - margins.right;
+// let innerHeight = 900 - margins.top - margins.bottom;
 
-// append the svg object to the body of the page
-let svg = d3
-  .select("div#graph svg")
-  .attr("width", outerWidth)
-  .attr("height", outerHeight)
-  .append("g")
-  .attr("id", "plot-area")
-  .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
+// // append the svg object to the body of the page
+// let svg = d3
+//   .select("div#graph svg")
+//   .attr("width", outerWidth)
+//   .attr("height", outerHeight)
+//   .append("g")
+//   .attr("id", "plot-area")
+//   .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
 // read the data, then draw the graph
 // d3.csv(
@@ -309,6 +311,6 @@ function continuous(selector_id, colorscale) {
 
 //create a tooltip 
 
-</script>
+</script> -->
 </body>
 
