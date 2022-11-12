@@ -1,9 +1,9 @@
 // Margin Convention
-let margins = { top: 20, right: 25, bottom: 80, left: 80 };
-let outerWidth = 1500;
-let outerHeight = 1500;
-let innerWidth = 900 - margins.left - margins.right;
-let innerHeight = 900 - margins.top - margins.bottom;
+let margins = { top: 20, right: 25, bottom: 80, left: 200 };
+let outerWidth = 1200;
+let outerHeight = 1200;
+let innerWidth = 1100 - margins.left - margins.right;
+let innerHeight = 1100 - margins.top - margins.bottom;
 
 // append the svg object to the body of the page
 let svg = d3
@@ -139,7 +139,7 @@ function draw(data) {
   var tooltip = d3
     .select("#graph")
     .append("div")
-    .style("opacity", 1)
+    .style("opacity", 0)
     .attr("class", "tooltip")
     .style("background-color", "white")
     .style("border", "solid")
@@ -164,12 +164,13 @@ function draw(data) {
 
   // add the squares
   svg
-    .append("g")
-    .attr("transform", "translate(2, 2)")
-    // .attr("stroke", "black")
+
     .selectAll("rect")
-    .data(data)
-    .join("rect")
+    .data(data, function (d) {
+      return d.group + ":" + d.variable;
+    })
+    .enter()
+    .append("rect")
     .attr("width", xScale.bandwidth())
     .attr("height", yScale.bandwidth())
     .attr("x", (d) => {
@@ -178,6 +179,12 @@ function draw(data) {
     .attr("y", (d) => {
       return yScale(d.year);
     })
+    .style("fill", function (d) {
+      return colorScale(d.avg_temperature);
+    })
+    .style("stroke-width", 4)
+    .style("stroke", "none")
+
     .on("mouseover", mouseover)
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave)
@@ -261,7 +268,7 @@ function draw(data) {
   svg
     .append("text")
     .attr("x", 400)
-    .attr("y", 850)
+    .attr("y", 1050)
     .attr("text-anchor", "left")
     .style("font-size", "14px")
     .style("fill", "black")
@@ -270,7 +277,7 @@ function draw(data) {
   // Add subtitle to graph
   svg
     .append("text")
-    .attr("x", 0)
+    .attr("x", 300)
     .attr("y", 0)
     .attr("text-anchor", "left")
     .style("font-size", "14px")
@@ -281,7 +288,7 @@ function draw(data) {
   svg
     .append("text")
     .attr("x", -500)
-    .attr("y", 0)
+    .attr("y", -100)
     .attr("transform", "rotate(270)")
     .attr("text-anchor", "left")
     .style("font-size", "14px")
