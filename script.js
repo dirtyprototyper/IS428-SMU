@@ -12,7 +12,10 @@ let svg = d3
   .attr("height", outerHeight)
   .append("g")
   .attr("id", "plot-area")
-  .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
+  .attr(
+    "transform",
+    "translate(" + margins.left + "," + (margins.top + 60) + ")"
+  );
 
 // read the data, then draw the graph using the draw function
 d3.csv(
@@ -48,26 +51,7 @@ function draw(data) {
     } else if (theDate[1] == "12") {
       data[i].month = "December";
     }
-
-    totalsum = 0;
-    maxnumber = 0;
-    minnumber = 0;
-
-    totalsum = Number(data[i].avg_temperature) + totalsum;
-
-    if (maxnumber < data[i].avg_temperature) {
-      maxnumber = data[i].avg_temperature;
-    }
-    if (minnumber > data[i].avg_temperature) {
-      minnumber = data[i].avg_temperature;
-    }
   }
-
-  console.log("minnumber");
-  console.log(minnumber);
-  console.log("maxnumber");
-  console.log(maxnumber);
-  console.log(totalsum / data.length);
 
   //month
   var groups = d3.map(data, (d) => d.month).keys();
@@ -165,78 +149,6 @@ function draw(data) {
     .on("mouseleave", mouseleave)
     .style("fill", (d) => colorScale(d.avg_temperature));
 
-  continuous("#legend1", colorScale);
-
-  function continuous(selector_id, colorscale) {
-    var legendheight = 300,
-      legendwidth = 400,
-      margin = { top: 10, right: 60, bottom: 10, left: 2 };
-
-    var canvas = d3
-      .select(selector_id)
-      .style("height", legendheight + "px")
-      .style("width", legendwidth + "px")
-      .style("position", "relative")
-      .append("canvas")
-      .attr("height", legendheight - margin.top - margin.bottom)
-      .attr("width", 1)
-      .style("height", legendheight - margin.top - margin.bottom + "px")
-      .style("width", legendwidth - margin.left - margin.right + "px")
-      .style("border", "1px solid #000")
-      .style("position", "absolute")
-      .style("top", margin.top + "px")
-      .style("left", margin.left + "px")
-      .attr("id", "wow")
-
-      .node();
-
-    var ctx = canvas.getContext("2d");
-
-    var legendscale = d3
-      .scaleLinear()
-      .range([1, legendheight - margin.top - margin.bottom])
-      .domain(colorscale.domain());
-
-    // image data hackery based on http://bl.ocks.org/mbostock/048d21cf747371b11884f75ad896e5a5
-    // var image = ctx.createImageData(1, legendheight);
-    //width, height
-    var image = ctx.createImageData(1, legendheight);
-
-    d3.range(legendheight).forEach(function (i) {
-      var c = d3.rgb(colorscale(legendscale.invert(i)));
-      image.data[4 * i] = c.r;
-      image.data[4 * i + 1] = c.g;
-      image.data[4 * i + 2] = c.b;
-      image.data[4 * i + 3] = 255;
-    });
-    ctx.putImageData(image, 0, 0);
-
-    //for the legend 10 14...
-    var legendaxis = d3.axisRight().scale(legendscale).tickSize(10).ticks(10);
-
-    var svg = d3
-      .select(selector_id)
-      .append("svg")
-      .attr("height", legendheight + "px")
-      .attr("width", legendwidth + "px")
-      .attr("transform", "rotate(270)");
-
-    // .style("position", "absolute")
-    // .style("left", "0px")
-    // .style("top", "0px");
-
-    svg
-      .append("g")
-      .attr("class", "axis")
-      .attr(
-        // "translate(" + (margin.left + legendwidth / 2) + "," + (1000 - 50) + ")"
-
-        "transform",
-        "translate(" + (legendwidth - 30) + "," + 0 + ")"
-      )
-
-      .call(legendaxis);
-  }
   //end
 
   // Add subtitle to graph
@@ -252,7 +164,7 @@ function draw(data) {
   svg
     .append("text")
     .attr("x", 300)
-    .attr("y", 0)
+    .attr("y", -20)
     .attr("text-anchor", "left")
     .style("font-size", "2em")
     .style("fill", "black")
@@ -268,12 +180,4 @@ function draw(data) {
     .style("font-size", "2em")
     .style("fill", "black")
     .text("Year!");
-
-  rotateLegend();
-}
-
-function rotateLegend() {
-  document.getElementById("wow").style.transform = "rotate(270deg)";
-
-  // theLegend.attr("transform", "rotate(270)");
 }
