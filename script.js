@@ -1,7 +1,7 @@
 // Margin Convention
 let margins = { top: 20, right: 25, bottom: 80, left: 200 };
-let outerWidth = 1200;
-let outerHeight = 1200;
+let outerWidth = 1300;
+let outerHeight = 1300;
 let innerWidth = 1100 - margins.left - margins.right;
 let innerHeight = 1100 - margins.top - margins.bottom;
 
@@ -14,31 +14,15 @@ let svg = d3
   .attr("id", "plot-area")
   .attr("transform", "translate(" + margins.left + "," + margins.top + ")");
 
-// read the data, then draw the graph
-// d3.csv(
-//   "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv"
-// ).then(draw);
-
+// read the data, then draw the graph using the draw function
 d3.csv(
   "https://raw.githubusercontent.com/dirtyprototyper/assigmentD3js/master/data/temp_monthly.csv"
 ).then(draw);
-
-// d3.csv("/data/employees.csv", function(data) {
-//   for (var i = 0; i < data.length; i++) {
-//       console.log(data[i].Name);
-//       console.log(data[i].Age);
-//   }
-
-// function draw(data) {
-//   console.log(data);
-// }
 
 function draw(data) {
   for (i = 0; i < data.length; i++) {
     theDate = data[i].date.split("-");
     data[i].year = theDate[0];
-    //  data[i].month = theDate[1];
-    //  console.log( typeof(theDate[1]))
     if (theDate[1] == "01") {
       data[i].month = "January";
     } else if (theDate[1] == "02") {
@@ -74,7 +58,6 @@ function draw(data) {
     if (maxnumber < data[i].avg_temperature) {
       maxnumber = data[i].avg_temperature;
     }
-
     if (minnumber > data[i].avg_temperature) {
       minnumber = data[i].avg_temperature;
     }
@@ -122,14 +105,6 @@ function draw(data) {
     .select(".domain") // remove vertical line from axis
     .remove();
 
-  //**
-  svg
-    .append("text")
-    .attr("x", 265)
-    .attr("y", 240)
-    .style("text-anchor", "middle")
-    .text("Year");
-
   // build color scale
   let colorScale = d3
     .scaleSequential()
@@ -147,6 +122,7 @@ function draw(data) {
     .style("border-radius", "5px")
     .style("padding", "5px");
 
+  //interaction with graph (hovering)
   var mouseover = function (d) {
     tooltip.style("opacity", 1);
     d3.select(this).style("stroke", "black").style("opacity", 1);
@@ -164,7 +140,6 @@ function draw(data) {
 
   // add the squares
   svg
-
     .selectAll("rect")
     .data(data, function (d) {
       return d.group + ":" + d.variable;
@@ -193,8 +168,8 @@ function draw(data) {
   continuous("#legend1", colorScale);
 
   function continuous(selector_id, colorscale) {
-    var legendheight = 200,
-      legendwidth = 80,
+    var legendheight = 300,
+      legendwidth = 400,
       margin = { top: 10, right: 60, bottom: 10, left: 2 };
 
     var canvas = d3
@@ -211,6 +186,8 @@ function draw(data) {
       .style("position", "absolute")
       .style("top", margin.top + "px")
       .style("left", margin.left + "px")
+      .attr("id", "wow")
+
       .node();
 
     var ctx = canvas.getContext("2d");
@@ -221,7 +198,10 @@ function draw(data) {
       .domain(colorscale.domain());
 
     // image data hackery based on http://bl.ocks.org/mbostock/048d21cf747371b11884f75ad896e5a5
+    // var image = ctx.createImageData(1, legendheight);
+    //width, height
     var image = ctx.createImageData(1, legendheight);
+
     d3.range(legendheight).forEach(function (i) {
       var c = d3.rgb(colorscale(legendscale.invert(i)));
       image.data[4 * i] = c.r;
@@ -231,15 +211,7 @@ function draw(data) {
     });
     ctx.putImageData(image, 0, 0);
 
-    // A simpler way to do the above, but possibly slower. keep in mind the legend width is stretched because the width attr of the canvas is 1
-    // See http://stackoverflow.com/questions/4899799/whats-the-best-way-to-set-a-single-pixel-in-an-html5-canvas
-    /*
-    d3.range(legendheight).forEach(function(i) {
-      ctx.fillStyle = colorscale(legendscale.invert(i));
-      ctx.fillRect(0,i,1,1);
-    });
-    */
-
+    //for the legend 10 14...
     var legendaxis = d3.axisRight().scale(legendscale).tickSize(10).ticks(10);
 
     var svg = d3
@@ -247,43 +219,45 @@ function draw(data) {
       .append("svg")
       .attr("height", legendheight + "px")
       .attr("width", legendwidth + "px")
-      .style("position", "absolute")
-      .style("left", "0px")
-      .style("top", "0px");
+      .attr("transform", "rotate(270)");
+
+    // .style("position", "absolute")
+    // .style("left", "0px")
+    // .style("top", "0px");
 
     svg
       .append("g")
       .attr("class", "axis")
       .attr(
+        // "translate(" + (margin.left + legendwidth / 2) + "," + (1000 - 50) + ")"
+
         "transform",
-        "translate(" +
-          (legendwidth - margin.left - margin.right + 3) +
-          "," +
-          margin.top +
-          ")"
+        "translate(" + (legendwidth - 30) + "," + 0 + ")"
       )
+
       .call(legendaxis);
   }
+  //end
 
+  // Add subtitle to graph
   svg
     .append("text")
     .attr("x", 400)
     .attr("y", 1050)
     .attr("text-anchor", "left")
-    .style("font-size", "14px")
+    .style("font-size", "2em")
     .style("fill", "black")
     .style("max-width", 400)
-    .text("Title of the world2.");
-  // Add subtitle to graph
+    .text("Month!");
   svg
     .append("text")
     .attr("x", 300)
     .attr("y", 0)
     .attr("text-anchor", "left")
-    .style("font-size", "14px")
+    .style("font-size", "2em")
     .style("fill", "black")
     .style("max-width", 400)
-    .text("Title of the world.");
+    .text("Average Monthly Temperature!");
 
   svg
     .append("text")
@@ -291,8 +265,15 @@ function draw(data) {
     .attr("y", -100)
     .attr("transform", "rotate(270)")
     .attr("text-anchor", "left")
-    .style("font-size", "14px")
+    .style("font-size", "2em")
     .style("fill", "black")
-    .style("max-width", 400)
-    .text("Title of the world3  .");
+    .text("Year!");
+
+  rotateLegend();
+}
+
+function rotateLegend() {
+  document.getElementById("wow").style.transform = "rotate(270deg)";
+
+  // theLegend.attr("transform", "rotate(270)");
 }
